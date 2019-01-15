@@ -48,6 +48,8 @@ public class MessagesActivity extends AppCompatActivity {
 
     private void fetchLastMessage() {
         String uid = FirebaseAuth.getInstance().getUid();
+        if (uid == null) return;
+
 
         FirebaseFirestore.getInstance().collection("/last-messages")
                 .document(uid)

@@ -163,8 +163,8 @@ public class ChatActivity extends AppCompatActivity {
 
                             Contact contact = new Contact();
                             contact.setUuid(toId);
-                            contact.setUsername(user.getUsername());
-                            contact.setPhotoUrl(user.getProfileUrl());
+                            contact.setUsername(me.getUsername());
+                            contact.setPhotoUrl(me.getProfileUrl());
                             contact.setTimestamp(message.getTimestamp());
                             contact.setLastMessage(message.getText());
 
@@ -198,8 +198,11 @@ public class ChatActivity extends AppCompatActivity {
             ImageView imgMessage = viewHolder.itemView.findViewById(R.id.img_message_user);
 
             txtMsg.setText(message.getText());
+
             Picasso.get()
-                    .load(user.getProfileUrl())
+                    .load(message.getFromId().equals(FirebaseAuth.getInstance().getUid())
+                            ? me.getProfileUrl()
+                            : user.getProfileUrl())
                     .into(imgMessage);
         }
 
