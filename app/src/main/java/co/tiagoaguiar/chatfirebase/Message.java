@@ -43,4 +43,5 @@ public class Message {
     public void setToId(String toId) {
         this.toId = toId;
     }
+
 }

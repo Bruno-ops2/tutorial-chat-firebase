@@ -1,15 +1,14 @@
 package co.tiagoaguiar.chatfirebase;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,6 +18,7 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.squareup.picasso.Picasso;
 import com.xwray.groupie.GroupAdapter;
 import com.xwray.groupie.Item;
@@ -35,6 +35,9 @@ public class MessagesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_messages);
 
+        ChatApplication application = (ChatApplication) getApplication();
+        getApplication().registerActivityLifecycleCallbacks(application);
+
         RecyclerView rv = findViewById(R.id.recycler_contact);
         rv.setLayoutManager(new LinearLayoutManager(this));
 
@@ -43,7 +46,20 @@ public class MessagesActivity extends AppCompatActivity {
 
         verifyAuthentication();
 
+        updateToken();
+
         fetchLastMessage();
+    }
+
+    private void updateToken() {
+        String token = FirebaseInstanceId.getInstance().getToken();
+        String uid = FirebaseAuth.getInstance().getUid();
+
+        if (uid != null) {
+            FirebaseFirestore.getInstance().collection("users")
+                    .document(uid)
+                    .update("token", token);
+        }
     }
 
     private void fetchLastMessage() {
