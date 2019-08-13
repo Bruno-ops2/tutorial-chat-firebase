@@ -39,7 +39,7 @@ public class ChatActivity extends AppCompatActivity {
     private GroupAdapter adapter;
     private User user;
     private User me;
-    
+
     private EditText editChat;
 
     @Override
@@ -64,7 +64,7 @@ public class ChatActivity extends AppCompatActivity {
         adapter = new GroupAdapter();
         rv.setLayoutManager(new LinearLayoutManager(this));
         rv.setAdapter(adapter);
-        
+
         FirebaseFirestore.getInstance().collection("/users")
                 .document(FirebaseAuth.getInstance().getUid())
                 .get()
@@ -143,6 +143,19 @@ public class ChatActivity extends AppCompatActivity {
                                     .collection("contacts")
                                     .document(toId)
                                     .set(contact);
+
+                            if (!user.isOnline()) {
+                              Notification notification = new Notification();
+                              notification.setFromId(message.getFromId());
+                              notification.setToId(message.getToId());
+                              notification.setTimestamp(message.getTimestamp());
+                              notification.setText(message.getText());
+                              notification.setFromName(me.getUsername());
+
+                              FirebaseFirestore.getInstance().collection("/notifications")
+                                      .document(user.getToken())
+                                      .set(notification);
+                            }
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
